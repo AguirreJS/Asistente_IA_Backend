@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/login/static/css/main.2d994efb.css",
+    "main.js": "/login/static/js/main.98db563a.js",
+    "static/media/Intervia_inicio.png": "/login/static/media/Intervia_inicio.816b27c7fd58d4fd6772.png",
+    "static/media/logo.svg": "/login/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/login/index.html",
+    "main.2d994efb.css.map": "/login/static/css/main.2d994efb.css.map",
+    "main.98db563a.js.map": "/login/static/js/main.98db563a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2d994efb.css",
+    "static/js/main.98db563a.js"
+  ]
+}

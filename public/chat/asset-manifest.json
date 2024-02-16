@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/chat/static/css/main.5e5e368c.css",
+    "main.js": "/chat/static/js/main.699bdbee.js",
+    "static/media/alerta.mp3": "/chat/static/media/alerta.8ebaf7ada0f153c25666.mp3",
+    "index.html": "/chat/index.html",
+    "main.5e5e368c.css.map": "/chat/static/css/main.5e5e368c.css.map",
+    "main.699bdbee.js.map": "/chat/static/js/main.699bdbee.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5e5e368c.css",
+    "static/js/main.699bdbee.js"
+  ]
+}

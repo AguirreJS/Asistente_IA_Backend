@@ -1,0 +1,28 @@
+{
+  "name": "comintervia",
+  "version": "1.0.0",
+  "description": "Proyecto beta community Intervia",
+  "main": "App.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Agustin Aguirre",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.3",
+    "body-parser": "^1.20.2",
+    "cookie-session": "^2.1.0",
+    "cors": "^2.8.5",
+    "deepspeech": "^0.9.3",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "moment-timezone": "^0.5.45",
+    "mongoose": "^8.0.3",
+    "node-fetch": "^3.3.2",
+    "node-telegram-bot-api": "^0.64.0",
+    "nodemailer": "^6.9.7",
+    "openai": "^4.20.1",
+    "socket.io": "^4.7.3"
+  }
+}
