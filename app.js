@@ -202,13 +202,18 @@ ManejarSolicitud( Object , socket )
 });
 
 
-app.post('/ActivarAsistente', (req, res) => {
+app.post('/ActivarAsistente', async (req, res) => {
   // Los datos enviados en el body del request están ahora en req.body
   const { IA, IDchat } = req.body; // Extrae las variables utilizando destructuring
-
+let correo = req.session.correo
   // Imprime las variables recibidas para verificar
-  ReactivarIA( IA , IDchat);
 
+  const cliente = await BaseClientes.findOne({ correoCliente: correo })
+
+
+  ReactivarIA( IA , IDchat , cliente.Id_chatbot);
+
+ console.log(correo)
   // Puedes procesar aquí los datos recibidos según necesites
   // ...
 
@@ -300,8 +305,8 @@ if (webhookEvent.object === 'whatsapp_business_account') {
         if (message.type === 'interactive') {
           const selectedButtonId = message;
           if(selectedButtonId.interactive &&  selectedButtonId.interactive.button_reply.title){
-          buscarYAlmacenar(selectedButtonId.from, "user", selectedButtonId.interactive.button_reply.title)
-         keywordInterceptor( selectedButtonId.interactive.button_reply.id ,selectedButtonId.from , cliente.Tipo)
+          buscarYAlmacenar(selectedButtonId.from, "user", selectedButtonId.interactive.button_reply.title , cliente.Id_chatbot)
+         keywordInterceptor( selectedButtonId.interactive.button_reply.id ,selectedButtonId.from , cliente.Tipo , cliente.Id_chatbot)
           return true;}
         }
       }

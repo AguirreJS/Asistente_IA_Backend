@@ -2,7 +2,6 @@ import { Console } from 'console';
 import { createThread,  addMessageToThread, runAssistantAndGetResponse  } from '../IA/API_openIA.js';
 import { Chats , BaseClientes } from './ConfigDB.js'
 import moment from 'moment-timezone';
-import { MensajeWhatsapp , MensajeBaneo } from '../Mensajeria_api/API_mensajes.js';
 export let messageBuffer = {};
 export let timer = {};
 import { keywordInterceptor } from '../PedidosFinalizados/Procesarpedidolisto.js';
@@ -25,16 +24,21 @@ export async function procesarMensajes(chatId , Id_chatbot) {
 
   let mensajesUnificados = messageBuffer[chatId].join(' ');
 
-  await buscarYAlmacenar(chatId, "user", mensajesUnificados)
+  await buscarYAlmacenar(chatId, "user", mensajesUnificados , Id_chatbot)
 
   const cliente = await BaseClientes.findOne({ Id_chatbot: Id_chatbot });
   
   const ASSISTANT = cliente.TKAsistente;
 
-  let Ban= await Chats.findOne({ IDchat: chatId })
+  let Ban= await Chats.findOne({
+    $and: [
+      { IDchat: chatId }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+      { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+    ]
+  });
 
 
-  if ( await ManipuadorDeContinuidad(Ban , cliente , mensajesUnificados ) == true) {
+  if ( await ManipuadorDeContinuidad(Ban , cliente , mensajesUnificados , Id_chatbot) == true) {
 
 
 
@@ -52,9 +56,9 @@ delete timer[chatId];
 
   if (valor === "New") {
 
-    await buscarYAlmacenar(chatId, "user", mensajesUnificados)
+    await buscarYAlmacenar(chatId, "user", mensajesUnificados , Id_chatbot)
    
-    let Inicial = await keywordInterceptor( "inicial", chatId , cliente.Tipo);
+    let Inicial = await keywordInterceptor( "inicial", chatId , cliente.Tipo , cliente.Id_chatbot);
 
 
 if(Inicial == false)  /// Antes de comunicarse con la IA puede enviarse un mensaje inicial
@@ -67,7 +71,7 @@ if(Inicial == false)  /// Antes de comunicarse con la IA puede enviarse un mensa
   
  
 
-    if( await  keywordInterceptor( mensajesUnificados , chatId , cliente.Tipo ) == false )
+    if( await  keywordInterceptor( mensajesUnificados , chatId , cliente.Tipo , cliente.Id_chatbot ) == false )
           
           { await procesarYalmacenar(chatId, mensajesUnificados , ASSISTANT );} 
               
@@ -104,8 +108,13 @@ export async function buscarValor( clave , Id_chatbot) {
 
   try {
     // Buscar en la base de datos un documento con el IDchat proporcionado
-    let objetoEncontrado = await Chats.findOne({ IDchat: clave });
-
+    let objetoEncontrado = await Chats.findOne({
+      $and: [
+        { IDchat: clave }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+        { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+      ]
+    });
+console.log(objetoEncontrado)
     if (objetoEncontrado) {
       // Si se encuentra el objeto, devolver su IDchat
       return objetoEncontrado.IDchat;
@@ -144,13 +153,18 @@ export async function buscarValor( clave , Id_chatbot) {
 
 
 
-export async function buscarYAlmacenar(IDchat, rol, mensaje) {
+export async function buscarYAlmacenar(IDchat, rol, mensaje , Id_chatbot) {
+  console.log(IDchat + Id_chatbot)
   try {
-   
     // Buscar el documento con el IDchat especificado
-    let chat = await Chats.findOne({ IDchat: IDchat });
+    let chat = await Chats.findOne({
+      $and: [
+        { IDchat: IDchat }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+        { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+      ]
+    });
 
-
+console.log(chat)
     const fechaArgentina = moment().tz("America/Argentina/Buenos_Aires").format("YYYY-MM-DD HH-mm");
 
     if (chat) {

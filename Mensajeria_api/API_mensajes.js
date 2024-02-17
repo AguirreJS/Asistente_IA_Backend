@@ -67,18 +67,25 @@ export async function  ProcesadorDeMensajesAcumulativos ( mensaje, from , phone_
 
 
 
-export async function MensajeWhatsapp(mensaje, chatId , A) {
+export async function MensajeWhatsapp(mensaje, chatId , A , Id_chatbot) {
 
   let info;
   try {
-      info = await Chats.findOne({ IDchat: chatId });
+    
+ info = await Chats.findOne({
+        $and: [
+          { IDchat: chatId }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+          { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+        ]
+      });
+      
   } catch (error) {
       // Manejo del error
       console.error(error);
   }
 
   if(A == "1") {
-    EnvioRespuestaWP( info ? info.Id_chatbot : null , mensaje, chatId);   buscarYAlmacenar(chatId, "cliente", mensaje);
+    EnvioRespuestaWP( info ? info.Id_chatbot : null , mensaje, chatId);   buscarYAlmacenar(chatId, "cliente", mensaje , Id_chatbot) ;
   } else {
 
    let precios ; 
@@ -95,7 +102,7 @@ export async function MensajeWhatsapp(mensaje, chatId , A) {
 
 
    
-if(precios == false ){   EnvioRespuestaWP( info ? info.Id_chatbot : null , mensaje, chatId);   buscarYAlmacenar(chatId, "system", mensaje); } else {
+if(precios == false ){   EnvioRespuestaWP( info ? info.Id_chatbot : null , mensaje, chatId);   buscarYAlmacenar(chatId, "system", mensaje , Id_chatbot); } else {
 
   let fucion =` 🗣 ${mensaje} 
   
@@ -109,7 +116,7 @@ if(precios == false ){   EnvioRespuestaWP( info ? info.Id_chatbot : null , mensa
 
   EnvioRespuestaWP( info ? info.Id_chatbot : null , fucion, chatId);
 
-  buscarYAlmacenar(chatId, "system", fucion);
+  buscarYAlmacenar(chatId, "system", fucion , info.Id_chatbot) ;
 }
   
    
@@ -117,6 +124,8 @@ if(precios == false ){   EnvioRespuestaWP( info ? info.Id_chatbot : null , mensa
 
 
 export async function EnvioRespuestaWP(phone_number_id, mensaje, from) {
+
+  console.log(phone_number_id + "ID_chatbot")
   const cliente = await BaseClientes.findOne({ Id_chatbot: phone_number_id });
   const token = cliente.TokenWP;
   const MAX_LENGTH = 2900;
@@ -159,7 +168,7 @@ export async function EnvioRespuestaWP(phone_number_id, mensaje, from) {
 
 
 
-        buscarYAlmacenar(from, "system", mensaje)
+        buscarYAlmacenar(from, "system", mensaje , phone_number_id)
 
 
 
@@ -223,26 +232,24 @@ export function MensajeBaneo(chatId) {
 }
 
 
-export function MensajeManual(objeto){
-
-console.log(objeto)
+export function MensajeManual(objeto , ID_charbot){
 
   let mensaje = objeto.Mensaje
   let chatID = objeto.IDchat
 
 
-  MensajeWhatsapp(mensaje, chatID , "1")
+  MensajeWhatsapp(mensaje, chatID , "1" , ID_charbot)
 
 }
 
   
   
 export async function ManejarYalmacenarImagenes(req) {
+  let Id_chatbot = req.body.entry[0].changes[0].value.metadata.phone_number_id;
   let fromValue = req.body.entry[0].changes[0].value.messages[0].from;
 
-  let chat = await Chats.findOne({ IDchat: fromValue });
 
-  const cliente = await BaseClientes.findOne({ Id_chatbot: chat.Id_chatbot });
+  const cliente = await BaseClientes.findOne({ Id_chatbot: Id_chatbot });
 
   const ubicacion = cliente.ubicacionMultimedia;
 
@@ -251,11 +258,11 @@ export async function ManejarYalmacenarImagenes(req) {
 
 
   // Asegurarse de que el directorio existe antes de intentar guardar la imagen
-  const dirPath = path.join(__dirname, `multimedia/${ubicacion}/${fromValue}-${mediaId}.jpg`);
+  const dirPath = path.join(__dirname, `multimedia/${ubicacion}/${fromValue}-${mediaId}.jpg` , Id_chatbot);
   const dir = path.dirname(dirPath);
 console.log(dirPath)
   setTimeout(() => {
-    buscarYAlmacenar(fromValue, "user", `multimedia/${ubicacion}/${fromValue}-${mediaId}.jpg`); // Cambio la extensión a .mp3
+    buscarYAlmacenar(fromValue, "user", `multimedia/${ubicacion}/${fromValue}-${mediaId}.jpg` , Id_chatbot); // Cambio la extensión a .mp3
     },2000);
   
 
@@ -312,22 +319,23 @@ console.log(dirPath)
 
 
 export async function ManejarYalmacenarAudios(req) {
+  let Id_chatbot = req.body.entry[0].changes[0].value.metadata.phone_number_id;
   let fromValue = req.body.entry[0].changes[0].value.messages[0].from;
 
-  let chat = await Chats.findOne({ IDchat: fromValue });
-  const cliente = await BaseClientes.findOne({ Id_chatbot: chat.Id_chatbot });
+  
+  const cliente = await BaseClientes.findOne({ Id_chatbot: Id_chatbot });
   const ubicacion = cliente.ubicacionMultimedia; // Asumiendo que esta propiedad existe y es válida para audios
 
   const mediaId = req.body.entry[0].changes[0].value.messages[0].audio.id;
   console.log(mediaId);
 
   // Asegurarse de que el directorio existe antes de intentar guardar el audio
-  const dirPath = path.join(__dirname, `multimedia/${ubicacion}/${fromValue}-${mediaId}.mp3`);
+  const dirPath = path.join(__dirname, `multimedia/${ubicacion}/${fromValue}-${mediaId}.mp3` , Id_chatbot);
   const dir = path.dirname(dirPath);
   console.log(dirPath);
 
   setTimeout(() => {
-    buscarYAlmacenar(fromValue, "user", `multimedia/${ubicacion}/${fromValue}-${mediaId}.mp3`);
+    buscarYAlmacenar(fromValue, "user", `multimedia/${ubicacion}/${fromValue}-${mediaId}.mp3` , Id_chatbot);
   }, 2000);
 
   // Verifica si el directorio existe, si no, lo crea

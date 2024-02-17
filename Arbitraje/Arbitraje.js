@@ -257,17 +257,22 @@ export function manejarAdiosImagenes(message) {
 
 
 
-export async function ProblmasIA(mensaje, IDchat) {
-  const chat = await Chats.findOne({ IDchat: IDchat });
+export async function ProblmasIA(mensaje, IDchat , Id_chatbot) {
+  const chat = await await Chats.findOne({
+    $and: [
+      { IDchat: IDchat }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+      { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+    ]
+  });
 
 
   if (chat.datos.pausa == "Fallo") {
 
 
-MensajeWhatsapp(mensaje2enrespuesta, IDchat);
+MensajeWhatsapp(mensaje2enrespuesta, IDchat , null , Id_chatbot);
     // Aquí debes agregar algo para usar 'mensajenuevo', por ejemplo, enviar este mensaje
   } else {
-    MensajeWhatsapp(mensaje, IDchat);
+    MensajeWhatsapp(mensaje, IDchat , null , Id_chatbot);
     chat.datos.pausa = "Fallo";
     chat.save();
   }

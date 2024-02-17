@@ -103,10 +103,18 @@ export async function addMessageToThread(threadId, userMessage , IDchat) {
     apiKey: await RetornarTokenOpen(chatId),
 });
 
+console.log(assistantId)
 
-  console.log("Ejecutando pregunta")
-  const chat = await Chats.findOne({ IDchat: chatId });
-  const cliente = await BaseClientes.findOne({ TKAsistente: assistantId });
+const cliente = await BaseClientes.findOne({ TKAsistente: assistantId });
+
+
+  const chat = await Chats.findOne({
+    $and: [
+      { IDchat: chatId }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+      { Id_chatbot: cliente.Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+    ]
+  });
+
 
   try {
     // Crea una ejecución (run) en el hilo con el ID del asistente proporcionado
@@ -130,7 +138,7 @@ while (runStatus.status !== 'completed') {
     // Si han pasado 2 minutos (120000 milisegundos), ejecuta ManejodeEsperaIA()
     if (tiempoTranscurrido >= TiempoAesperarParaLAia) {
       if(chat.AntiSpam.FalloEnRespuestaIA == "Reintento") { 
-        ProblmasIA(mensajePredeterminadoParaError, chatId)
+        ProblmasIA(mensajePredeterminadoParaError, chatId , cliente.Id_chatbot )
         return false
       } else {
         ManejodeEsperaIA(threadId, assistantId, chatId , denegar);
@@ -158,7 +166,7 @@ await chat.save();
 
   let MensajeFinal = limpiarTexto(assistantMessages)
 console.log(MensajeFinal)
-  contarTokens(MensajeFinal , chatId)
+  contarTokens(MensajeFinal , chatId) //manejar diferentes id chats
 
  
   if( denegar && denegar == "1"){
@@ -175,7 +183,7 @@ if (cliente.ParametrosDeteccion){
     if(Faseunodeteccion ) { 
 
     console.log("Se detecto la Face 2 del proceso")
-    keywordInterceptor( "DeteccionClave" , chatId , cliente.Tipo)
+    keywordInterceptor( "DeteccionClave" , chatId , cliente.Tipo , cliente.Id_chatbot)
     
     console.log("Retornar parametro" + cliente.retornarParametros)
 
@@ -193,7 +201,7 @@ if (cliente.ParametrosDeteccion){
 
     
   // Enviar el mensajeee
-  MensajeWhatsapp( MensajeFinal, chatId)
+  MensajeWhatsapp( MensajeFinal, chatId , null , chat.Id_chatbot)
 
     return  MensajeFinal;
 

@@ -16,7 +16,13 @@ export async function ManipuadorDeContinuidad(chat, cliente, Mensaje) {
 
     if ( Mensaje == "FrenoManualAplicado" ) {
 
-        const chats = await Chats.findOne({ IDchat: chat });
+
+        const chats = await Chats.findOne({
+            $and: [
+              { IDchat: chat }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+              { Id_chatbot: cliente.Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+            ]
+          });
         chats.datos.pausa = "Manual"
         chats.save()
 
@@ -35,18 +41,23 @@ export async function ManipuadorDeContinuidad(chat, cliente, Mensaje) {
 
                 } else if (chat.Consumo >= cliente.limiteConsumo) {
 
-                    const chats = await Chats.findOne({ IDchat: chat.IDchat });
+                    const chats = await Chats.findOne({
+                        $and: [
+                          { IDchat: chat.IDchat }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+                          { Id_chatbot: cliente.Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+                        ]
+                      });
 
                     console.log(chats.datos.pausa)
              
                     if(chats.datos.pausa && chats.datos.pausa == "Fallo" ){
                   
                     
-                    MensajeWhatsapp(mensaje2enrespuesta, chat.IDchat);
+                    MensajeWhatsapp(mensaje2enrespuesta, chat.IDchat , null , cliente.Id_chatbot);
                         // Aquí debes agregar algo para usar 'mensajenuevo', por ejemplo, enviar este mensaje
                       } else {
 
-                        MensajeWhatsapp(mensajePredeterminadoParaError, chat.IDchat);
+                        MensajeWhatsapp(mensajePredeterminadoParaError, chat.IDchat , null , cliente.Id_chatbot);
                         chat.datos.pausa = "Fallo";
                         chat.save();
                       }
@@ -62,18 +73,23 @@ export async function ManipuadorDeContinuidad(chat, cliente, Mensaje) {
     return false
 }
 
-export async function ReactivarIA(IA, IDchat) {
+export async function ReactivarIA(IA, IDchat , Id_chatbot) {
     console.log(IA);
 
     if (IA == "Si") {
-        const chats = await Chats.findOne({ IDchat: IDchat });
+        const chats = await Chats.findOne({
+            $and: [
+              { IDchat: IDchat }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+              { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+            ]
+          });
 
         if (!chats) {
             console.log("Chat no encontrado");
             return; // Asegúrate de manejar este caso adecuadamente
         }
 
-        const cliente = await BaseClientes.findOne({ Id_chatbot: chats.Id_chatbot });
+        const cliente = await BaseClientes.findOne({ Id_chatbot: Id_chatbot });
 
         if (!cliente) {
             console.log("Cliente no encontrado");
@@ -89,7 +105,12 @@ export async function ReactivarIA(IA, IDchat) {
         await chats.save();
 
     } else {
-        const chats = await Chats.findOne({ IDchat: IDchat });
+        const chats = await Chats.findOne({
+            $and: [
+              { IDchat: IDchat }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+              { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+            ]
+          });
         if (!chats) {
             console.log("Chat no encontrado");
             return; // Asegúrate de manejar este caso adecuadamente
