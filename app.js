@@ -225,7 +225,10 @@ let correo = req.session.correo
 
 app.post('/cerrarsesion', (req, res) => {
   const { id } = req.body; // Extrae el ID del cuerpo de la solicitud
-
+  req.session.correo = "";
+  req.session.online = undefined;
+  req.session.save(function(err) {
+        } );
 
   res.status(200).send('Sesión cerrada'); // Envía una respuesta al cliente
 })

@@ -116,24 +116,24 @@ async function EnvioChats(Id_chatbot, Socket) {
 
 
 
-export async function ActualizarAConexiones(IDchat , Id_chatbot) {
-    console.log("Actualizando clientes")
+export async function ActualizarAConexiones(IDchat, Id_chatbot) {
+    console.log("Actualizando clientes");
     try {
         // Buscar los chats por IDchat
-        const chats =  await Chats.find({
+        const chats = await Chats.find({
             $and: [
-              { IDchat: IDchat }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
-              { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+                { IDchat: IDchat },
+                { Id_chatbot: Id_chatbot }
             ]
-          });
+        });
 
         if (chats && chats.length > 0) {
-          
             const ChatString = chats[0].Id_chatbot;
 
-            // Primero, eliminar conexiones abiertas que no tienen un Id_chatbot asociado
+            // Eliminar conexiones abiertas que no tienen un Id_chatbot asociado
             await ConexionesAbiertas.deleteMany({ Id_chatbot: { $exists: false } });
 
+            // Ya no se eliminan las conexiones con Id_chatbot diferente, solo las que no tienen Id_chatbot
             if (ChatString) {
                 // Buscar conexiones abiertas que coincidan con el Id_chatbot encontrado
                 const conexiones = await ConexionesAbiertas.find({ Id_chatbot: ChatString });
@@ -160,6 +160,7 @@ export async function ActualizarAConexiones(IDchat , Id_chatbot) {
         console.error('Error al actualizar conexiones:', error);
     }
 }
+
 
 
 
