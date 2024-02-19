@@ -171,11 +171,16 @@ function obtenerUltimoContenidoUsuario(mensajes) {
   return null;
 }
 
-export async function filtrarPorProducto(palabraClave, IDchat) {
+export async function filtrarPorProducto(palabraClave, IDchat , Id_chatbot) {
 
-  const chat = await Chats.findOne({ IDchat: IDchat });
+  const chat =await Chats.findOne({
+           $and: [
+             { IDchat: IDchat }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+             { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+           ]
+         });
 
-  const cliente = await BaseClientes.findOne({ Id_chatbot: chat.Id_chatbot });
+  const cliente = await BaseClientes.findOne({ Id_chatbot: Id_chatbot });
 
   if (chat.datos.BuscadoProductosActivo == "false" || cliente.BuscadoProductosActivo == false){ return false}
 
@@ -258,7 +263,7 @@ export function manejarAdiosImagenes(message) {
 
 
 export async function ProblmasIA(mensaje, IDchat , Id_chatbot) {
-  const chat = await await Chats.findOne({
+  const chat =  await Chats.findOne({
     $and: [
       { IDchat: IDchat }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
       { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.

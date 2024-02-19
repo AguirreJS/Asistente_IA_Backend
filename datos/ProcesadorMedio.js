@@ -171,11 +171,13 @@ export async function buscarYAlmacenar(IDchat, rol, mensaje , Id_chatbot) {
     const fechaArgentina = moment().tz("America/Argentina/Buenos_Aires").format("YYYY-MM-DD HH-mm");
 
     if (chat) {
+     
       // Si el documento ya tiene un array conversationMessages, lo utilizamos; si no, creamos uno nuevo
       if (!chat.conversationMessages) {
         chat.conversationMessages = [];
       }
       chat.conversationMessages.push({ role: rol, content: mensaje , fecha : fechaArgentina });
+     
 if(rol == "user"){
       // Obtener la fecha y hora actual en UTC
       const nowUtc = new Date();
@@ -188,13 +190,14 @@ if(rol == "user"){
      }
 
       await chat.save();
-      ActualizarAConexiones(IDchat);
+     
     } else {
       console.log("No se encontró un IDchat, no se almacenó la conversación debido a este error");
     }
   } catch (err) {
     console.error("Error al interactuar con la base de datos al momento de guardar la conversación: ", err);
   }
+  ActualizarAConexiones(IDchat , Id_chatbot);
 }
 
 

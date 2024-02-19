@@ -1,4 +1,3 @@
-import TelegramBot from 'node-telegram-bot-api';
 import fetch from 'node-fetch';
 import fs from 'fs';
 import axios from 'axios';
@@ -92,15 +91,13 @@ export async function MensajeWhatsapp(mensaje, chatId , A , Id_chatbot) {
    let precios ; 
 
    try {
-    precios = await filtrarPorProducto(mensaje , chatId );
+    precios = await filtrarPorProducto(mensaje , chatId , Id_chatbot );
 } catch (error) {
     // Manejo del error
  
 }
 
-    setTimeout(() => chequearYAgregarAntiSpam(chatId), 20000);
-
-
+  
 
    
 if(precios == false ){   EnvioRespuestaWP( info ? info.Id_chatbot : null , mensaje, chatId);   buscarYAlmacenar(chatId, "system", mensaje , Id_chatbot); } else {
@@ -259,9 +256,8 @@ export async function ManejarYalmacenarImagenes(req) {
 
 
   // Asegurarse de que el directorio existe antes de intentar guardar la imagen
-  const dirPath = path.join(__dirname, `multimedia/${ubicacion}/${fromValue}-${mediaId}.jpg` , Id_chatbot);
+  const dirPath = path.join(__dirname, `multimedia/${ubicacion}/${fromValue}-${mediaId}.jpg`);
   const dir = path.dirname(dirPath);
-console.log(dirPath)
   setTimeout(() => {
     buscarYAlmacenar(fromValue, "user", `multimedia/${ubicacion}/${fromValue}-${mediaId}.jpg` , Id_chatbot); // Cambio la extensión a .mp3
     },2000);
@@ -286,7 +282,7 @@ console.log(dirPath)
       });
 
       const data = await response.json();
-      console.log('Datos de la imagen:', data);
+      console.log('Datos de la imagen:');
 
       const imageResponse = await fetch(data.url, {
         method: 'GET',
@@ -304,14 +300,14 @@ console.log(dirPath)
       // Guardar la imagen en el directorio especificado
       fs.writeFile(dirPath, buffer, (err) => {
         if (err) {
-          console.error('Error al guardar la imagen:', err);
+          console.error('Error al guardar la imagen:');
         } else {
           console.log('Imagen guardada con éxito en:', dirPath);
 
         }
       });
     } catch (error) {
-      console.error('Error al recuperar la imagen:', error);
+      console.error('Error al recuperar la imagen:');
     }
   }
 }
@@ -331,7 +327,7 @@ export async function ManejarYalmacenarAudios(req) {
   console.log(mediaId);
 
   // Asegurarse de que el directorio existe antes de intentar guardar el audio
-  const dirPath = path.join(__dirname, `multimedia/${ubicacion}/${fromValue}-${mediaId}.mp3` , Id_chatbot);
+  const dirPath = path.join(__dirname, `multimedia/${ubicacion}/${fromValue}-${mediaId}.mp3`);
   const dir = path.dirname(dirPath);
   console.log(dirPath);
 
@@ -357,8 +353,7 @@ export async function ManejarYalmacenarAudios(req) {
         },
       });
 
-      const data = await response.json();
-      console.log('Datos del audio:', data);
+      const data = await response.json()
 
       const audioResponse = await fetch(data.url, {
         method: 'GET',
@@ -376,13 +371,13 @@ export async function ManejarYalmacenarAudios(req) {
       // Guardar el audio en el directorio especificado
       fs.writeFile(dirPath, buffer, (err) => {
         if (err) {
-          console.error('Error al guardar el audio:', err);
+          console.error('Error al guardar el audio:');
         } else {
           console.log('Audio guardado con éxito en:', dirPath);
         }
       });
     } catch (error) {
-      console.error('Error al recuperar el audio:', error);
+      console.error('Error al recuperar el audio:');
     }
   }
 }
