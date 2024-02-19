@@ -1,8 +1,14 @@
 import { Chats } from '../datos/ConfigDB.js'
 
-export async function contarTokens(texto, IDchat) {
+export async function contarTokens(texto, IDchat , Id_chatbot) {
     try {
-        const chat = await Chats.findOne({ IDchat: IDchat });
+        const chat =await Chats.findOne({
+            $and: [
+              { IDchat: IDchat }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+              { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+            ]
+          });
+        
 
         if (!chat) {
             console.log('Chat no encontrado');

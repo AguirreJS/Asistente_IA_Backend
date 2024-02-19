@@ -38,45 +38,39 @@ async function RetornarTokenOpen(IDchat) {
 
 
 
-
-
-export async function createThread(Idchat , mensaje , ASSISTANT , A ) {
-
+export async function createThread(Idchat, mensaje, ASSISTANT, A, Id_chatbot) {
   const openai = new OpenAI({
     apiKey: await RetornarTokenOpen(Idchat),
-});
+  });
 
-
-console.log(A + Idchat)
-    const thread = await openai.beta.threads.create();
-    // Retorna un objeto con ambos ID
-    if(A == "1" || A == "2"){
+  const thread = await openai.beta.threads.create();
+  // Retorna un objeto con ambos ID
+  if (A == "1" || A == "2") {
     const resultado = await Chats.findOneAndUpdate(
-      { IDchat: Idchat },
+      // Actualizado para buscar coincidencias tanto en IDchat como en Id_chatbot
+      { IDchat: Idchat, Id_chatbot: Id_chatbot },
       { ThreadId1: thread.id }
-    );} 
-  if (A =="1") {
-    addMessageToThread(thread.id, mensaje , Idchat);
-  setTimeout(() => {
-    runAssistantAndGetResponse(thread.id , ASSISTANT , Idchat )
-  }, 100);
-}
-  
-  
+    );
   }
+  if (A == "1") {
+    addMessageToThread(thread.id, mensaje, Idchat);
+    setTimeout(() => {
+      runAssistantAndGetResponse(thread.id, ASSISTANT, Idchat)
+    }, 100);
+  }
+}
 
 
 
 
-
-export async function addMessageToThread(threadId, userMessage , IDchat) {
+export async function addMessageToThread(threadId, userMessage , IDchat , Id_chatbot) {
 
   const openai = new OpenAI({
     apiKey: await RetornarTokenOpen(IDchat),
 });
 
 
-  contarTokens(userMessage , IDchat)
+  contarTokens(userMessage , IDchat , Id_chatbot)
 
     try {
       const messageContent = String(userMessage);
@@ -103,7 +97,7 @@ export async function addMessageToThread(threadId, userMessage , IDchat) {
     apiKey: await RetornarTokenOpen(chatId),
 });
 
-console.log(assistantId)
+
 
 const cliente = await BaseClientes.findOne({ TKAsistente: assistantId });
 
@@ -165,8 +159,8 @@ await chat.save();
     .join('\n');
 
   let MensajeFinal = limpiarTexto(assistantMessages)
-console.log(MensajeFinal)
-  contarTokens(MensajeFinal , chatId) //manejar diferentes id chats
+
+  contarTokens(MensajeFinal , chatId , cliente.Id_chatbot) //manejar diferentes id chats
 
  
   if( denegar && denegar == "1"){
@@ -185,7 +179,7 @@ if (cliente.ParametrosDeteccion){
     console.log("Se detecto la Face 2 del proceso")
     keywordInterceptor( "DeteccionClave" , chatId , cliente.Tipo , cliente.Id_chatbot)
     
-    console.log("Retornar parametro" + cliente.retornarParametros)
+
 
     if(cliente.retornarParametros == false){
             
@@ -220,13 +214,18 @@ if (cliente.ParametrosDeteccion){
 
   
 
-export async function ProcesadordepedidosporIA (IDchat){
+export async function ProcesadordepedidosporIA (IDchat , Id_chatbot){
 
   
-  const chat = await Chats.findOne({ IDchat: IDchat });
+  const chat = await Chats.findOne({
+    $and: [
+      { IDchat: IDchat }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+      { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+    ]
+  });
 
 
-  const cliente = await BaseClientes.findOne({ Id_chatbot: chat.Id_chatbot });
+  const cliente = await BaseClientes.findOne({ Id_chatbot: Id_chatbot });
  let Mensaje1 = cliente.consultaInternaIA;
 
 

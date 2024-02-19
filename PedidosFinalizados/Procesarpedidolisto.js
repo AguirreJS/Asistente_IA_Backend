@@ -1,9 +1,7 @@
 
 import mongoose from 'mongoose';
 import { Chats , BaseClientes } from '../datos/ConfigDB.js'
-import { ProcesadordepedidosporIA } from '../IA/API_openIA.js'
 import { MensajeWhatsapp } from '../Mensajeria_api/API_mensajes.js';
-import { createThread } from '../IA/API_openIA.js';
 import { MensajesConOpciones } from '../Mensajeria_api/API_mensajes.js';
 import { ProblmasIA } from '../Arbitraje/Arbitraje.js';
 import { arraydFuncionesModulares } from './FuncionesModulares/FuncionesReutilizables.js';
@@ -49,7 +47,7 @@ export function detectarprocesamietodePedido(texto , frase) {
   
   async function PerfilVentas ( texto, IDchat , Id_chatbot ) {
 
-   
+   console.log("Perfil ventas" + IDchat + Id_chatbot)
 
         //////////////////////////////////////
 
@@ -81,7 +79,7 @@ export function detectarprocesamietodePedido(texto , frase) {
     }
 
     let resultado = evaluarVariantes() ;
-    console.log(resultado)
+
 
 
     if( resultado == false ){ return false } else {
@@ -122,6 +120,7 @@ export function detectarprocesamietodePedido(texto , frase) {
 
 async function escanearresultado(objeto , texto , IDchat , Id_chatbot) {
 
+  console.log("Funciones modulares" + IDchat + Id_chatbot)
 
   ////////////////////// funciones modulares //////////////////////
 

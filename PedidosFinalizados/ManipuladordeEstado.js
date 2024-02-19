@@ -96,7 +96,7 @@ export async function ReactivarIA(IA, IDchat , Id_chatbot) {
             return; // Asegúrate de manejar este caso adecuadamente
         }
 
-        createThread(IDchat, "Nuevo Hilo Creado", cliente.TKAsistente, "2");
+        createThread(IDchat, "Nuevo Hilo Creado", cliente.TKAsistente, "2" , Id_chatbot);
 
         chats.datos.pausa = "";
         // Eliminar el campo BuscadoProductosActivo estableciéndolo a undefined

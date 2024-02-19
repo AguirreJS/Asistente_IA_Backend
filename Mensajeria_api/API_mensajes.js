@@ -69,6 +69,7 @@ export async function  ProcesadorDeMensajesAcumulativos ( mensaje, from , phone_
 
 export async function MensajeWhatsapp(mensaje, chatId , A , Id_chatbot) {
 
+
   let info;
   try {
     
@@ -85,7 +86,7 @@ export async function MensajeWhatsapp(mensaje, chatId , A , Id_chatbot) {
   }
 
   if(A == "1") {
-    EnvioRespuestaWP( info ? info.Id_chatbot : null , mensaje, chatId);   buscarYAlmacenar(chatId, "cliente", mensaje , Id_chatbot) ;
+    EnvioRespuestaWP( Id_chatbot , mensaje, chatId);   buscarYAlmacenar(chatId, "cliente", mensaje , Id_chatbot) ;
   } else {
 
    let precios ; 
@@ -125,7 +126,7 @@ if(precios == false ){   EnvioRespuestaWP( info ? info.Id_chatbot : null , mensa
 
 export async function EnvioRespuestaWP(phone_number_id, mensaje, from) {
 
-  console.log(phone_number_id + "ID_chatbot")
+ 
   const cliente = await BaseClientes.findOne({ Id_chatbot: phone_number_id });
   const token = cliente.TokenWP;
   const MAX_LENGTH = 2900;

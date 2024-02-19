@@ -16,7 +16,7 @@ if (valor == 0 || valor == "0") {
 
     
 
-    MensajeWhatsapp( objecto.mensajeCuerpo, IDchat)
+    MensajeWhatsapp( objecto.mensajeCuerpo, IDchat , null , Id_chatbot)
 
     setTimeout(() => {
       MensajeWhatsapp("🌟 Conectando Asistente 🤖", IDchat , null , Id_chatbot);
@@ -35,7 +35,7 @@ MensajeWhatsapp("1️⃣", IDchat , null , Id_chatbot);
 }, 3500); 
 
 setTimeout(() => {
-createThread(IDchat , "Hola" , cliente.TKAsistente, 1 ) 
+createThread(IDchat , "Hola" , cliente.TKAsistente, 1 , Id_chatbot ) 
 }, 3000); 
 
 
@@ -72,7 +72,7 @@ if(correo == null){
 } else if( valor == 2){
 
    
-    ProcesadordepedidosporIA(IDchat)
+    ProcesadordepedidosporIA(IDchat , Id_chatbot)
 
     setTimeout(function() {
         EnviodeMails(IDchat);

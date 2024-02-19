@@ -213,7 +213,7 @@ let correo = req.session.correo
 
   ReactivarIA( IA , IDchat , cliente.Id_chatbot);
 
- console.log(correo)
+
   // Puedes procesar aquí los datos recibidos según necesites
   // ...
 

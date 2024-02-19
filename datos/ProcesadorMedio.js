@@ -41,7 +41,7 @@ export async function procesarMensajes(chatId , Id_chatbot) {
   if ( await ManipuadorDeContinuidad(Ban , cliente , mensajesUnificados , Id_chatbot) == true) {
 
 
-
+console.log("Se activo el manipulador")
 
 
 messageBuffer[chatId] = [];
@@ -63,9 +63,9 @@ delete timer[chatId];
 
 if(Inicial == false)  /// Antes de comunicarse con la IA puede enviarse un mensaje inicial
    
-    { createThread(chatId, mensajesUnificados , ASSISTANT , "1");   }
+    { createThread(chatId, mensajesUnificados , ASSISTANT , "1" , Id_chatbot);   }
    
-    else if ( Inicial == true) {    createThread(chatId, mensajesUnificados , ASSISTANT , "2");}  
+    else if ( Inicial == true) {    createThread(chatId, mensajesUnificados , ASSISTANT , "2" , Id_chatbot);}  
 
   } else {
   
@@ -73,7 +73,7 @@ if(Inicial == false)  /// Antes de comunicarse con la IA puede enviarse un mensa
 
     if( await  keywordInterceptor( mensajesUnificados , chatId , cliente.Tipo , cliente.Id_chatbot ) == false )
           
-          { await procesarYalmacenar(chatId, mensajesUnificados , ASSISTANT );} 
+          { await procesarYalmacenar(chatId, mensajesUnificados , ASSISTANT , cliente.Id_chatbot);} 
               
   }
 
@@ -85,15 +85,20 @@ if(Inicial == false)  /// Antes de comunicarse con la IA puede enviarse un mensa
 
 
 
-async function procesarYalmacenar(chatId, mensajesUnificados , asistente) {
+async function procesarYalmacenar(chatId, mensajesUnificados , asistente , Id_chatbot) {
 
-  const chat = await Chats.findOne({ IDchat: chatId });
+  const chat = await Chats.findOne({
+    $and: [
+      { IDchat: chatId }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+      { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+    ]
+  });
   let hilo = chat.ThreadId1;
   if (hilo) {
 
-    addMessageToThread(hilo, mensajesUnificados , chatId); 
+    addMessageToThread(hilo, mensajesUnificados , chatId , Id_chatbot); 
     setTimeout(() => {
-      runAssistantAndGetResponse(hilo, asistente, chatId);
+      runAssistantAndGetResponse(hilo, asistente, chatId );
     }, TiempoEjecucionRespuesta);
   } else {
     console.log('No se encontró un hilo con el ID proporcionado esto detiene inmediatamente la comverzacion, porfavor revise el error');
@@ -114,7 +119,6 @@ export async function buscarValor( clave , Id_chatbot) {
         { Id_chatbot: Id_chatbot } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
       ]
     });
-console.log(objetoEncontrado)
     if (objetoEncontrado) {
       // Si se encuentra el objeto, devolver su IDchat
       return objetoEncontrado.IDchat;
@@ -154,7 +158,7 @@ console.log(objetoEncontrado)
 
 
 export async function buscarYAlmacenar(IDchat, rol, mensaje , Id_chatbot) {
-  console.log(IDchat + Id_chatbot)
+
   try {
     // Buscar el documento con el IDchat especificado
     let chat = await Chats.findOne({
@@ -164,7 +168,6 @@ export async function buscarYAlmacenar(IDchat, rol, mensaje , Id_chatbot) {
       ]
     });
 
-console.log(chat)
     const fechaArgentina = moment().tz("America/Argentina/Buenos_Aires").format("YYYY-MM-DD HH-mm");
 
     if (chat) {
