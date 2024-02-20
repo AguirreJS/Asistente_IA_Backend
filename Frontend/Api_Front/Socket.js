@@ -163,18 +163,3 @@ export async function ActualizarAConexiones(IDchat, Id_chatbot) {
 
 
 
-
-
-
-// Desconectar socket
-/*
-function desconectarYReconectar() {
-  for (const [id, socket] of io.of("/").sockets) {
-      socket.disconnect(true);
-  }
-}
-
-
-setInterval(desconectarYReconectar, 10000);
-
-*/

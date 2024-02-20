@@ -24,13 +24,32 @@ const __dirname = path.dirname(__filename);
 
 export async function  ProcesadorDeMensajesAcumulativos ( mensaje, from , phone_number_id ) {
  
+  const chatId = from;
+
   const cliente = await BaseClientes.findOne({ Id_chatbot: phone_number_id });
 
   let tiempodeesperadefinido =  cliente.TiempoEspera;
+  
+  let Chat= await Chats.findOne({
+    $and: [
+      { IDchat: chatId }, // Asume que `chatId` es la variable que contiene el valor a buscar para `IDchat`.
+      { Id_chatbot:  phone_number_id } // Asume que `cliente.Id_chatbot` es el valor a buscar para `Id_chatbot`.
+    ]
+  });
+
+
+  if(Chat && Chat.datos && Chat.datos.pausa){
+    if(Chat.datos.pausa == "Manual") {
+      tiempodeesperadefinido = 500;
+    }
+
+  }
+
+ 
 
 
 
-    const chatId = from;
+ 
 
 
     // Inicializa el buffer para almacenar temporalmente la info del chat
