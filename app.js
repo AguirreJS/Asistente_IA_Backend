@@ -420,38 +420,44 @@ app.post("/webhook", function (request, response) {
 
 
 ////////////////////////////
-
 app.post('/validacioncredenciales', async (req, res) => {
-
-  const cliente = await BaseClientes.findOne({ correoCliente: req.body.correo });
-  if (cliente && cliente.ContraseñaUsuario == req.body.contraseña) {
-    req.session.online = true;
-    req.session.correo = req.body.correo;
-    req.session.Identificador = req.session.Identificador || generarNumeroRandom();
-    req.session.save(function(err) {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Error al guardar la sesión');
-      } else {
-        setTimeout(() => {
-          res.json({ respuesta: true });
-        }, 2000);
-      }
-    });
-
- 
-  } else {
-    res.json({ respuesta: false });
-  }
-
-  function generarNumeroRandom() {
-    let resultado = '';
-    for (let i = 0; i < 20; i++) {
-      resultado += Math.floor(Math.random() * 10).toString();
+  try {
+    const cliente = await BaseClientes.findOne({ correoCliente: req.body.correo });
+    if (!cliente) {
+      // Caso en que el correo electrónico no existe
+      return res.json({ respuesta: "NoExiste" });
     }
-    return resultado;
+    if (cliente.ContraseñaUsuario === req.body.contraseña) {
+      // Caso en que las credenciales son correctas
+      req.session.online = true;
+      req.session.correo = req.body.correo;
+      req.session.Identificador = req.session.Identificador || generarNumeroRandom();
+      req.session.save(function(err) {
+        if (err) {
+          console.error(err);
+          return res.status(500).send('Error al guardar la sesión');
+        }
+        // Respuesta exitosa
+        return res.json({ respuesta: true });
+      });
+    } else {
+      // Caso en que la contraseña es incorrecta
+      return res.json({ respuesta: false });
+    }
+  } catch (error) {
+    console.error('Error en la validación de credenciales:', error);
+    res.status(500).send('Error interno del servidor');
   }
 });
+
+function generarNumeroRandom() {
+  let resultado = '';
+  for (let i = 0; i < 20; i++) {
+    resultado += Math.floor(Math.random() * 10).toString();
+  }
+  return resultado;
+}
+
 
 
 
