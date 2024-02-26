@@ -458,7 +458,19 @@ function generarNumeroRandom() {
   return resultado;
 }
 
+app.post('/registrodeusuario', async (req, res) => { 
+  console.log(req.body);
+  // Enviar la URL de redireccionamiento como respuesta JSON
+  res.json({redirectUrl: '/pagina-de-exito'});
+  // res.json({redirectUrl: false}); ERROR INESPERADO
+});
 
 
+app.post('/restartuser', async (req, res) => { 
+  console.log(req.body);
+  // Enviar la URL de redireccionamiento como respuesta JSON
+  res.json({rest: true});
+
+});
 
 
