@@ -17,6 +17,7 @@ import { keywordInterceptor } from './PedidosFinalizados/Procesarpedidolisto.js'
 import { Chats , BaseClientes , ConexionesAbiertas } from './datos/ConfigDB.js'
 import { ManejarSolicitud } from './Frontend/Api_Front/Socket.js';
 import { ReactivarIA } from './PedidosFinalizados/ManipuladordeEstado.js';
+import { sendEmail , GeneradorEstructuraMail } from './Mensajeria_api/Api_correo.js';
 
 const app = express();
 app.use(express.json()); // Middleware para parsear JSON
@@ -459,12 +460,55 @@ function generarNumeroRandom() {
 }
 
 app.post('/registrodeusuario', async (req, res) => { 
-  console.log(req.body);
+  
+
+  const cliente = await BaseClientes.findOne({ correoCliente: req.body.email }); 
+
+  if(cliente) {
+    res.json({redirectUrl: false}); 
+    return false
+  }
+
+
+  function generarNumeroAlfanumerico(longitud) {
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let resultado = '';
+    for (let i = 0; i < longitud; i++) {
+      resultado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    }
+    return resultado;
+  }
+  
+  let Alfanum = generarNumeroAlfanumerico(15)
+
+  console.log(Alfanum)
   // Enviar la URL de redireccionamiento como respuesta JSON
-  res.json({redirectUrl: '/pagina-de-exito'});
+
+
+  const nuevoObjeto = new BaseClientes({
+    correoCliente: req.body.email,
+    ContraseñaUsuario : req.body.password,
+    NameUser: req.body.name,
+    userActivo:false,
+    PanelControlNumber:Alfanum,
+    
+  });
+
+  await nuevoObjeto.save();
+
+
+  res.json({redirectUrl: Alfanum});
+
+  let url = "https://remoto.rhglobal.com.ar/ControlPanel/"+Alfanum;
+
+  GeneradorEstructuraMail("Confirme su correo electronico" ,  "Porfavor haga click en el boton mas abajo para confirmar el Email ingresado para la cuenta" , "Confirmar cuenta" , url , req.body.email , "Confirmacion de Correo Electronico Intervia" )
   // res.json({redirectUrl: false}); ERROR INESPERADO
 });
 
+
+
+
+///////////////// REGISTRAR USUARIO
 
 app.post('/restartuser', async (req, res) => { 
   console.log(req.body);

@@ -35,6 +35,9 @@ const chatSchema = new Schema({
 export const Chats = mongoose.model('Chats', chatSchema);
 
 const BaseClientesSchema = new Schema({
+  userActivo:Boolean,
+  NameUser:String,
+  PanelControlNumber:String,
   Tipo:String,
   Webhook: String,
   TokenWH: String,
