@@ -38,6 +38,8 @@ const BaseClientesSchema = new Schema({
   userActivo:Boolean,
   NameUser:String,
   PanelControlNumber:String,
+  NewPssNumber:String,
+  PssTemporal:String,
   Tipo:String,
   Webhook: String,
   TokenWH: String,

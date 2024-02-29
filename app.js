@@ -85,7 +85,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
   app.get('/', (req, res) => {
-
+   console.log( req.session.correo)
     res.send("Estamos trabajando en este sitio");
   });
 
@@ -479,7 +479,7 @@ app.post('/registrodeusuario', async (req, res) => {
     return resultado;
   }
   
-  let Alfanum = generarNumeroAlfanumerico(15)
+  let Alfanum = generarNumeroAlfanumerico(30)
 
   console.log(Alfanum)
   // Enviar la URL de redireccionamiento como respuesta JSON
@@ -499,22 +499,97 @@ app.post('/registrodeusuario', async (req, res) => {
 
   res.json({redirectUrl: Alfanum});
 
-  let url = "https://remoto.rhglobal.com.ar/ControlPanel/"+Alfanum;
+  let url = "https://remoto.rhglobal.com.ar/ControlPanel/"+ Alfanum;
 
   GeneradorEstructuraMail("Confirme su correo electronico" ,  "Porfavor haga click en el boton mas abajo para confirmar el Email ingresado para la cuenta" , "Confirmar cuenta" , url , req.body.email , "Confirmacion de Correo Electronico Intervia" )
-  // res.json({redirectUrl: false}); ERROR INESPERADO
+
+});
+
+
+app.get('/ControlPanel/:id', async function(req, res) {
+  const id = req.params.id;
+  
+  try {
+    const Cliente = await BaseClientes.findOne({ PanelControlNumber: id  }); 
+
+    if (Cliente) {
+      console.log(Cliente)
+      Cliente.userActivo = true;
+      // Guardar el documento modificado
+
+      req.session.online = true;
+      req.session.correo = Cliente.correoCliente;
+
+
+      await Cliente.save();
+      // Redireccionar a la ruta '/ControlPanel'
+      res.redirect('/ControlPanel');
+    } else {
+      res.send('Esta ceunta no existe');
+    }
+  } catch (error) {
+    console.error('Error al guardar el documento:', error);
+    res.status(500).send('Ocurrió un error al intentar activar el usuario.');
+  }
 });
 
 
 
 
-///////////////// REGISTRAR USUARIO
+///////////////// REESTABLECER CONTRASEÑA USUARIO
 
 app.post('/restartuser', async (req, res) => { 
-  console.log(req.body);
+
+
+  function generarNumeroAlfanumerico(longitud) {
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let resultado = '';
+    for (let i = 0; i < longitud; i++) {
+      resultado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    }
+    return resultado;
+  }
+
+let Alfanum = generarNumeroAlfanumerico(35)
+
+  const Cliente = await BaseClientes.findOne({ correoCliente: req.body.email });
+  
+  if(Cliente){
+
+    let url = "https://remoto.rhglobal.com.ar/resetpas/"+ Alfanum;
+
+    Cliente.PssTemporal = req.body.password;
+    Cliente.NewPssNumber = Alfanum;
+
+    await Cliente.save();
+    res.json({rest: true});
+    GeneradorEstructuraMail("Aprobar el reestablecimiento de su contraseña" , "Por favor haga clic en el botón de abajo para confirmar el restablecimiento de la contraseña para la cuenta asociada a este correo electrónico." , "Confirmar cambio" , url , req.body.email , "Confirmación de Restablecimiento de Contraseña")
+  } else {
   // Enviar la URL de redireccionamiento como respuesta JSON
-  res.json({rest: true});
+  res.json({rest: false});}
 
 });
 
 
+
+app.get('/resetpas/:id', async function(req, res) {
+  const id = req.params.id;
+  
+  try {
+    const Cliente = await BaseClientes.findOne({ NewPssNumber: id  }); 
+
+    if (Cliente) {
+ 
+     Cliente.ContraseñaUsuario = Cliente.PssTemporal;
+
+      await Cliente.save();
+      // Redireccionar a la ruta '/ControlPanel'
+      res.redirect('/login');
+    } else {
+      res.send('Esta cuenta no existe');
+    }
+  } catch (error) {
+    console.error('Error al guardar el documento:', error);
+    res.status(500).send('Ocurrió un error al intentar activar el usuario.');
+  }
+});

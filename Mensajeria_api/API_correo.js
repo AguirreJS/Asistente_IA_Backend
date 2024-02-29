@@ -52,78 +52,87 @@ export async function sendEmail(AsuntoCoreo, ContenidoCorre,CorreoObjetivo ) {
   export function GeneradorEstructuraMail(Titulo ,  Descripcion , Boton , UrlBoton , Correo , Asunto ){
 
   let cuerpo =   `
-    <!DOCTYPE html>
-    <html>
-    <head>
-     <title>Email Verification</title>
-     <link rel="stylesheet" type="text/css" href="styles.css">
-    </head>
-    <style>
-    
-    body {
-     background-color: #333;
-     font-family: Arial, sans-serif;
-    }
-    
-    .container {
-     width: 500px;
-     background-color: #444;
-     padding: 40px;
-     margin: 50px auto;
-     border-radius: 4px;
-     box-shadow: 0px 0px 10px 1px rgba(255, 255, 255, 0.562);
-    }
-    
-    h1 {
-     font-size: 22px;
-     margin-bottom: 20px;
-     color: #ddd;
-     text-align: center;
-    }
-    
-    p {
-     font-size: 18px;
-     margin-bottom: 30px;
-     color: #bbb;
-    }
-    
-    .verify-button {
-     display: block;
-     width: 200px;
-     height: 50px;
-     background-color: #446688;
-     color: #fff;
-     border-radius: 4px;
-     text-decoration: none;
-     text-align: center;
-     line-height: 50px;
-     margin: 0 auto;
-     color : white;
-     }
-    
-    .verify-button:hover {
-     background-color: #334d66;
-     color : white;
-     }
-    
-    .logo {
-     display: block;
-     width: 250px;
-     height: auto;
-     margin: 0 auto;
-     margin-bottom: 30px;
-     }
-    
-    </style>
-    <body>
-     <div class="container">
-     <img src="https://remoto.rhglobal.com.ar/login/static/media/Intervia_inicio.816b27c7fd58d4fd6772.png" class="logo">
-     <h1>${Titulo}</h1>
-     <p>${Descripcion}</p>
-     <a href="${UrlBoton}" class="verify-button">${Boton}</a>
-     </div>
-    </body>
-    </html>
+  <!DOCTYPE html>
+  <html>
+  <head>
+   <link rel="stylesheet" type="text/css" href="styles.css">
+  </head>
+  <style>
+  
+  body {
+    background-color: #333;
+    font-family: Arial, sans-serif;
+   }
+   
+   .container {
+    width: 500px;
+    background-color: #474646;
+    padding: 40px;
+    margin: 50px auto;
+    border-radius: 4px;
+    box-shadow: 0px 0px 10px 1px rgba(255, 255, 255, 0.562);
+   }
+   
+   h1 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #ddd;
+    text-align: center;
+   }
+   
+   p {
+      text-align: center;
+    font-size: 18px;
+    margin-bottom: 30px;
+    color: #bbb;
+   }
+   
+   .verify-button {
+    display: block;
+    width: 200px;
+    height: 50px;
+    background-color: #e9eaea;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    text-align: center;
+    line-height: 50px;
+    margin: 0 auto;
+    color: white;
+    border: 2px solid rgb(240, 228, 228); 
+   }
+   
+   .verify-button:hover {
+    background-color: #e9eaea;
+    color: rgb(11, 11, 11);
+    text-decoration: none;
+   }
+   
+   .verify-button:link, 
+   .verify-button:visited {
+      background-color: #e9eaea;
+    color: rgb(1, 1, 1);
+    text-decoration: none;
+   }
+   
+   .logo {
+    display: block;
+    width: 250px;
+    height: auto;
+    margin: 0 auto;
+    margin-bottom: 30px;
+   }
+   
+  </style>
+  <body>
+   <div class="container">
+   <img src="https://remoto.rhglobal.com.ar/login/static/media/Intervia_inicio.816b27c7fd58d4fd6772.png" class="logo">
+   <h1>${Titulo}</h1>
+   <p>${Descripcion}</p>
+   <a href="${UrlBoton}" class="verify-button">${Boton}</a>
+   </div>
+  </body>
+  </html>
   
     `;
 
