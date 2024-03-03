@@ -19,6 +19,8 @@ import { ManejarSolicitud } from './Frontend/Api_Front/Socket.js';
 import { ReactivarIA } from './PedidosFinalizados/ManipuladordeEstado.js';
 import { sendEmail , GeneradorEstructuraMail } from './Mensajeria_api/Api_correo.js';
 
+let Dominio = "https://remoto.rhglobal.com.ar"
+
 const app = express();
 app.use(express.json()); // Middleware para parsear JSON
 
@@ -499,7 +501,7 @@ app.post('/registrodeusuario', async (req, res) => {
 
   res.json({redirectUrl: Alfanum});
 
-  let url = "https://remoto.rhglobal.com.ar/ControlPanel/"+ Alfanum;
+  let url = Dominio + "/ControlPanel/"+ Alfanum;
 
   GeneradorEstructuraMail("Confirme su correo electronico" ,  "Porfavor haga click en el boton mas abajo para confirmar el Email ingresado para la cuenta" , "Confirmar cuenta" , url , req.body.email , "Confirmacion de Correo Electronico Intervia" )
 
@@ -556,7 +558,7 @@ let Alfanum = generarNumeroAlfanumerico(35)
   
   if(Cliente){
 
-    let url = "https://remoto.rhglobal.com.ar/resetpas/"+ Alfanum;
+    let url = Dominio +"/resetpas/"+ Alfanum;
 
     Cliente.PssTemporal = req.body.password;
     Cliente.NewPssNumber = Alfanum;
@@ -570,7 +572,7 @@ let Alfanum = generarNumeroAlfanumerico(35)
 
 });
 
-
+////// Confirmacion de receteo de contraseña
 
 app.get('/resetpas/:id', async function(req, res) {
   const id = req.params.id;
@@ -592,4 +594,26 @@ app.get('/resetpas/:id', async function(req, res) {
     console.error('Error al guardar el documento:', error);
     res.status(500).send('Ocurrió un error al intentar activar el usuario.');
   }
+});
+
+
+app.get('/login/:id', async function(req, res) {
+  const id = req.params.id; 
+
+  res.redirect('/ControlPanel');
+
+})
+
+
+app.get('/ControlPanel', async function(req, res) {
+  // Asumiendo que tienes un archivo llamado "archivo.pdf" en el directorio "public"
+  const filePath = path.join(__dirname, 'public', 'verificar.html');
+  
+  // Enviar el archivo al cliente
+  res.sendFile(filePath, function(err) {
+    if (err) {
+      // Si hay un error al enviar el archivo, envía un mensaje de error
+      res.status(500).send('Error al enviar el archivo');
+    }
+  });
 });
