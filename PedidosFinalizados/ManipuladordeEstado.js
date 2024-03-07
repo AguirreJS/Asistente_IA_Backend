@@ -48,16 +48,17 @@ export async function ManipuadorDeContinuidad(chat, cliente, Mensaje) {
                         ]
                       });
 
-                    console.log(chats.datos.pausa)
              
                     if(chats.datos.pausa && chats.datos.pausa == "Fallo" ){
                   
+                      
                     
-                    MensajeWhatsapp(mensaje2enrespuesta, chat.IDchat , null , cliente.Id_chatbot);
-                        // Aquí debes agregar algo para usar 'mensajenuevo', por ejemplo, enviar este mensaje
+                    MensajeWhatsapp(cliente.MensajeLimiteConsumo, chat.IDchat , null , cliente.Id_chatbot);
+                    
+
                       } else {
 
-                        MensajeWhatsapp(mensajePredeterminadoParaError, chat.IDchat , null , cliente.Id_chatbot);
+                        MensajeWhatsapp(cliente.MensajeLimiteConsumo, chat.IDchat , null , cliente.Id_chatbot);
                         chat.datos.pausa = "Fallo";
                         chat.save();
                       }

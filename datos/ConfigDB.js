@@ -83,7 +83,8 @@ const BaseClientesSchema = new Schema({
   }],
   LimiteBusqueda: String,
   ContraseñaUsuario: String,
-  consultaInternaIA:String
+  consultaInternaIA:String,
+  MensajeLimiteConsumo:String
 
 });
 
