@@ -617,3 +617,18 @@ app.get('/ControlPanel', async function(req, res) {
     }
   });
 });
+
+
+
+app.get('/Policy', (req, res) => { 
+
+
+  const filePath = path.join(__dirname, 'public', 'PrivacyPolicy' ,'Policy.html');
+  // Enviar el archivo al cliente
+  res.sendFile(filePath, function(err) {
+    if (err) {
+      // Si hay un error al enviar el archivo, envía un mensaje de error
+      res.status(500).send('Error al enviar el archivo');
+    }
+  });
+});
