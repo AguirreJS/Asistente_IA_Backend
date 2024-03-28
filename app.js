@@ -19,6 +19,8 @@ import { ManejarSolicitud } from './Frontend/Api_Front/Socket.js';
 import { ReactivarIA } from './PedidosFinalizados/ManipuladordeEstado.js';
 import { sendEmail , GeneradorEstructuraMail } from './Mensajeria_api/Api_correo.js';
 
+
+
 let Dominio = "https://remoto.rhglobal.com.ar"
 
 const app = express();
@@ -328,7 +330,7 @@ if (webhookEvent.object === 'whatsapp_business_account') {
     
       let phone_number_id = req.body.entry[0].changes[0].value.metadata.phone_number_id;
       let from = req.body.entry[0].changes[0].value.messages[0].from;
-      EnvioRespuestaWP( phone_number_id , "🚫 Solo se aceptan comprobantes de pago en formato de imagen 🖼️. No se permiten otros archivos multimedia. 📵" , from)
+      EnvioRespuestaWP( phone_number_id , cliente.MensajeMultimedia , from)
       
     } else { 
       if (
@@ -632,3 +634,21 @@ app.get('/Policy', (req, res) => {
     }
   });
 });
+
+
+
+app.get('/estadodeautenticacion', async (req, res) => {
+
+  let correoCliente = req.session.correo;
+
+let ArraydListo = [];
+
+  const Cliente = await BaseClientes.findOne({ NewPssNumber: id  }); 
+
+  const data = Array(10).fill(false);
+  console.log("Estado")
+  // Enviar el array como respuesta en formato JSON
+  res.json(data);
+});
+
+
